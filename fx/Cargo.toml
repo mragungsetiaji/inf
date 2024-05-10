@@ -1,0 +1,20 @@
+[package]
+name = "fx"
+readme = "README.md"
+authors = ["asx"]
+version.workspace = true
+edition.workspace = true
+description.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+license.workspace = true
+homepage.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+candle-core.workspace = true
+axum = "0.7.4"
+clap = { version = "4.5.1", features = ["derive"] }
+fx-core = { version = "0.1.0", path = "../fx-core" }
+tokio = { version = "1.36.0", features = ["rt-multi-thread"] }

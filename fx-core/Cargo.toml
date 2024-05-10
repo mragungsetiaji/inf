@@ -1,0 +1,29 @@
+[package]
+name = "fx-core"
+readme = "README.md"
+authors = ["asx"]
+version.workspace = true
+edition.workspace = true
+description.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+license.workspace = true
+homepage.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+candle-core.workspace = true
+candle-nn = { git = "https://github.com/huggingface/candle.git", version = "0.4.0" }
+candle-transformers = { git = "https://github.com/huggingface/candle.git", version = "0.4.0" }
+dirs = "5.0.1"
+hf-hub = "0.3.2"
+serde = "1.0.197"
+serde_json = "1.0.114"
+thiserror = "1.0.57"
+tokenizers = "0.15.2"
+tqdm = "0.6.0"
+tracing = "0.1.40"
+
+[features]
+cuda = ["candle-core/cuda", "candle-nn/cuda", "candle-transformers/cuda"]
