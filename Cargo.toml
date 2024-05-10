@@ -9,7 +9,12 @@ resolver = "2"
 version = "0.1.0"
 edition = "2021"
 description = "llm serving."
+homepage = ""
+license = "MIT"
+repository = "github.com/mragungsetiaji/i"
+keywords = ["llm"]
+categories = ["machine-learning"]
 
 [workspace.dependencies]
 anyhow = "1.0.80"
-candle-core = { git = "https://github.com/huggingface/candle.git", version = "0.4.0"}
+candle-core = { git = "https://github.com/huggingface/candle.git", version = "0.5.1"}

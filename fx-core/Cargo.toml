@@ -14,8 +14,8 @@ homepage.workspace = true
 [dependencies]
 anyhow.workspace = true
 candle-core.workspace = true
-candle-nn = { git = "https://github.com/huggingface/candle.git", version = "0.4.0" }
-candle-transformers = { git = "https://github.com/huggingface/candle.git", version = "0.4.0" }
+candle-nn = { git = "https://github.com/huggingface/candle.git", version = "0.5.1" }
+candle-transformers = { git = "https://github.com/huggingface/candle.git", version = "0.5.1" }
 dirs = "5.0.1"
 hf-hub = "0.3.2"
 serde = "1.0.197"
@@ -24,6 +24,8 @@ thiserror = "1.0.57"
 tokenizers = "0.15.2"
 tqdm = "0.6.0"
 tracing = "0.1.40"
+clap = { version = "4.5.4", features = ["derive"] }
+candle-examples = { git = "https://github.com/huggingface/candle.git", version = "0.5.1" }
 
 [features]
 cuda = ["candle-core/cuda", "candle-nn/cuda", "candle-transformers/cuda"]

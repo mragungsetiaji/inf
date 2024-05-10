@@ -23,9 +23,7 @@ fn get_router() -> Router {
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = Args::parse();
-
     let app = get_router();
-
     let model_id = "mistralai/Mistral-7B-Instruct-v0.1";
     let loader = MistralLoader::new(
         model_id.to_string(),
@@ -34,8 +32,7 @@ async fn main() -> Result<()> {
         },
         Some(DType::F32),
     );
-    let pipeline = loader.load_model(None, TokenSource::CacheToken, None, &Device::Cpu)?;
-
+    let _pipeline = loader.load_model(None, TokenSource::CacheToken, None, &Device::Cpu)?;
     let listener = tokio::net::TcpListener::bind(format!("127.0.0.1:{}", args.port)).await?;
     axum::serve(listener, app).await?;
 
