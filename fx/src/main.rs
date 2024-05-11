@@ -2,7 +2,7 @@ use anyhow::Result;
 use axum::{routing::get, Router};
 use candle_core::{DType, Device};
 use clap::Parser;
-use fx_core::{Loader, MistralLoader, MistralSpecificConfig, TokenSource};
+use fx_core::{Loader, FxServ, MistralLoader, MistralSpecificConfig, TokenSource};
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
@@ -32,7 +32,9 @@ async fn main() -> Result<()> {
         },
         Some(DType::F32),
     );
-    let _pipeline = loader.load_model(None, TokenSource::CacheToken, None, &Device::Cpu)?;
+    let pipeline = loader.load_model(None, TokenSource::CacheToken, None, &Device::Cpu)?;
+    let _fx_serv = FxServ::new(pipeline);
+
     let listener = tokio::net::TcpListener::bind(format!("127.0.0.1:{}", args.port)).await?;
     axum::serve(listener, app).await?;
 

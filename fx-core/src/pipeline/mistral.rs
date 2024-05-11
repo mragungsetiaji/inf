@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use super::{Loader, ModelPaths, Pipeline, SimpleModelPaths, TokenSource};
 use crate::{
     models::mistral::{Config, Model},
@@ -112,7 +113,7 @@ impl Loader for MistralLoader {
         paths: &dyn ModelPaths,
         dtype: Option<DType>,
         device: &Device,
-    ) -> Result<Box<dyn Pipeline>> {
+    ) -> Result<Arc<dyn Pipeline>> {
         let basic_config: BasicConfig =
             serde_json::from_slice(&std::fs::read(paths.get_config_filename())?)?;
         let config = Config {
@@ -147,7 +148,7 @@ impl Loader for MistralLoader {
         let tokenizer = Tokenizer::from_file(paths.get_tokenizer_filename())
             .map_err(|e| TokenizerError::Error(e.to_string()))?;
 
-        Ok(Box::new(MistralPipeline { model, tokenizer }))
+        Ok(Arc::new(MistralPipeline { model, tokenizer }))
     }
 }
 
@@ -155,7 +156,7 @@ impl Pipeline for MistralPipeline {
     fn forward(&mut self, input_ids: &Tensor) -> Result<Tensor> {
         Ok(self.model.forward(input_ids, todo!())?)
     }
-    fn tokenize_prompt(&self, _prompt: String) -> Result<Tensor> {
+    fn tokenize_prompt(&self, _prompt: &str) -> Result<Vec<u32>> {
         todo!()
     }
 }
