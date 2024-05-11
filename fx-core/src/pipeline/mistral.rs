@@ -138,7 +138,7 @@ impl Loader for MistralLoader {
         let vb = from_mmaped_safetensors(
             paths.get_weight_filenames(),
             dtype.unwrap_or(default_dtype),
-            &device,
+            device,
             false,
         )?;
 
@@ -153,7 +153,7 @@ impl Loader for MistralLoader {
 
 impl Pipeline for MistralPipeline {
     fn forward(&mut self, input_ids: &Tensor) -> Result<Tensor> {
-        Ok(self.model.forward(input_ids)?)
+        Ok(self.model.forward(input_ids, todo!())?)
     }
     fn tokenize_prompt(&self, prompt: String) -> Result<Tensor> {
         todo!()
