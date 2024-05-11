@@ -155,7 +155,7 @@ impl Pipeline for MistralPipeline {
     fn forward(&mut self, input_ids: &Tensor) -> Result<Tensor> {
         Ok(self.model.forward(input_ids, todo!())?)
     }
-    fn tokenize_prompt(&self, prompt: String) -> Result<Tensor> {
+    fn tokenize_prompt(&self, _prompt: String) -> Result<Tensor> {
         todo!()
     }
 }
