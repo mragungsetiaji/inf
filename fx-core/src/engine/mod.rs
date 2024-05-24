@@ -1,9 +1,9 @@
 use std::{
     collections::VecDeque,
     iter::repeat,
-    sync::{mpsc::Receiver, Arc},
+    sync::{mpsc::Receiver, Mutex},
 };
-use anyhow::Result;
+
 use candle_core::{Device, Tensor};
 use crate::{
     pipeline::Pipeline,
@@ -14,14 +14,24 @@ use crate::{
 
 pub struct Engine {
     rx: Receiver<Request>,
-    pipeline: Arc<dyn Pipeline>,
+    pipeline: Box<Mutex<dyn Pipeline>>,
     requests: VecDeque<Request>,
     scheduler: Scheduler<VecDeque<Sequence>>,
     id: usize,
 }
 
+macro_rules! get_mut_pipeline {
+    ($pipeline:expr) => {
+        loop {
+            if let Ok(inner) = $pipeline.lock() {
+                break inner;
+            }
+        }
+    };
+}
+
 impl Engine {
-    pub fn new(rx: Receiver<Request>, pipeline: Arc<dyn Pipeline>) -> Self {
+    pub fn new(rx: Receiver<Request>, pipeline: Box<Mutex<dyn Pipeline>>) -> Self {
         Self {
             rx,
             pipeline,
@@ -37,30 +47,18 @@ impl Engine {
                 self.add_request(request);
             }
             let scheduled = self.scheduler.schedule();
-        }
-    }
-
-    fn prepare_inputs(&self, seqs: Vec<Sequence>, device: &Device) -> Tensor {
-        let max_len = seqs.iter().map(
-            |seq| seq.len()
-        ).max().unwrap();
-        let padding_tok = 0;
-        let mut seqs_tensors = Vec::new();
-        for seq in seqs.into_iter() {
-            let mut toks = seq.get_tokens().to_vec();
-            toks.extend(repeat(padding_tok).take(max_len - seq.len()));
-            seqs_tensors.push(
-                Tensor::from_vec(toks, max_len, device)
-                    .unwrap()
-                    .unsqueeze(0)
-                    .unwrap(),
+            let logits = get_mut_pipeline!(self.pipeline).forward(
+                &scheduled
+                    .seqs
+                    .iter()
+                    .map(|seq| seq.get_tokens())
+                    .collect::<Vec<_>>(),
             );
         }
-        Tensor::cat(&seqs_tensors, 0).unwrap()
     }
 
     fn add_request(&mut self, request: Request) {
-        let prompt = match self.pipeline.tokenize_prompt(&request.prompt) {
+        let prompt = match get_mut_pipeline!(self.pipeline).tokenize_prompt(&request.prompt) {
             Ok(prompt) => prompt,
             Err(e) => {
                 // Unwrap reasoning: The reciever should really be there, otherwise it is their fault.

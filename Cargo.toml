@@ -16,5 +16,5 @@ keywords = ["llm"]
 categories = ["machine-learning"]
 
 [workspace.dependencies]
-anyhow = "1.0.80"
+anyhow = { version = "1.0.80", feature = "std" }
 candle-core = { git = "https://github.com/huggingface/candle.git", version = "0.5.1"}

@@ -1,6 +1,6 @@
 use crate::response::Response;
 use std::{
-    cell::{Cell},
+    cell::Cell,
     sync::mpsc::Sender,
 };
 
@@ -42,10 +42,6 @@ impl Sequence {
 
     pub fn is_running(&self) -> bool {
         self.state.get() == SequenceState::Running
-    }
-
-    pub fn set_state(&self, state: SequenceState) {
-        self.state.set(state)
     }
 
     pub fn get_tokens(&self) -> &[u32] {
