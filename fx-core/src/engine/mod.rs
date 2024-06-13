@@ -46,14 +46,9 @@ impl Engine {
             if let Ok(request) = self.rx.recv() {
                 self.add_request(request);
             }
-            let scheduled = self.scheduler.schedule();
-            let logits = get_mut_pipeline!(self.pipeline).forward(
-                &scheduled
-                    .seqs
-                    .iter()
-                    .map(|seq| seq.get_tokens())
-                    .collect::<Vec<_>>(),
-            );
+            let mut scheduled = self.scheduler.schedule();
+            let _logits = get_mut_pipeline!(self.pipeline)
+                .forward(scheduled.seqs.iter_mut().collect::<Vec<_>>());
         }
     }
 

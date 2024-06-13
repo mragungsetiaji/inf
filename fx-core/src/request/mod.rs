@@ -21,6 +21,7 @@ pub struct Sequence {
     tokens: Vec<u32>,
     id: usize,
     state: Cell<SequenceState>,
+    gen_idx: usize,
 }
 
 impl Sequence {
@@ -29,6 +30,7 @@ impl Sequence {
             tokens,
             id,
             state: Cell::new(SequenceState::Waiting),
+            gen_idx: 0,
         }
     }
 
@@ -46,5 +48,9 @@ impl Sequence {
 
     pub fn get_tokens(&self) -> &[u32] {
         &self.tokens
+    }
+
+    pub fn gen_idx(&mut self) -> &mut usize {
+        &mut self.gen_idx
     }
 }
