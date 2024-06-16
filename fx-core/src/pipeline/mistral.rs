@@ -1,5 +1,4 @@
 use std::{
-    cell::RefMut,
     iter::repeat,
     sync::Mutex,
 };

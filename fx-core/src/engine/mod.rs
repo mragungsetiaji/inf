@@ -1,11 +1,10 @@
 use std::{
     collections::VecDeque,
-    iter::repeat,
     sync::{mpsc::Receiver, Mutex},
 };
 
-use candle_core::{Device, Tensor};
 use crate::{
+    get_mut_arcmutex,
     pipeline::Pipeline,
     request::{Request, Sequence},
     response::Response,
@@ -47,13 +46,13 @@ impl Engine {
                 self.add_request(request);
             }
             let mut scheduled = self.scheduler.schedule();
-            let _logits = get_mut_pipeline!(self.pipeline)
+            let _logits = get_mut_arcmutex!(self.pipeline)
                 .forward(scheduled.seqs.iter_mut().collect::<Vec<_>>());
         }
     }
 
     fn add_request(&mut self, request: Request) {
-        let prompt = match get_mut_pipeline!(self.pipeline).tokenize_prompt(&request.prompt) {
+        let prompt = match get_mut_arcmutex!(self.pipeline).tokenize_prompt(&request.prompt) {
             Ok(prompt) => prompt,
             Err(e) => {
                 // Unwrap reasoning: The reciever should really be there, otherwise it is their fault.
