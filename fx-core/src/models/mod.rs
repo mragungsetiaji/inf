@@ -7,7 +7,7 @@ use candle_core::Tensor;
 use crate::get_mut_arcmutex;
 
 #[derive(Debug, Clone)]
-pub(crate) struct Cache {
+pub struct Cache {
     cache: Arc<Mutex<Vec<Option<(Tensor, Tensor)>>>>,
 }
 
