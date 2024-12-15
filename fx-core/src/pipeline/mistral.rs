@@ -205,5 +205,26 @@ impl Pipeline for MistralPipeline {
     fn cache(&self) -> &crate::models::Cache {
         todo!()
     }
+    fn sample(&mut self, logits: Tensor, seq: Rc<RefCell<Sequence>>) -> Result<Logprobs> {
+        let logits = logits.squeeze(0).unwrap().to_dtype(DType::F32).unwrap();
+        let start_at = deref_refcell!(seq)
+            .get_toks()
+            .len()
+            .saturating_sub(self.config.repeat_last_n);
+        let ctxt = deref_refcell!(seq).get_toks()[start_at..].to_vec();
 
+        Ok(deref_mut_refcell!(seq)
+            .logits_processor()
+            .sample(&logits, Some(&ctxt))?)
+    }
+    fn tokenizer(&self) -> Tokenizer {
+        self.tokenizer.clone()
+    }
+    fn eos_tok(&self) -> u32 {
+        self.tokenizer
+            .get_vocab(true)
+            .get("</s>")
+            .copied()
+            .expect("Unable to extract `</s>` EOS token.")
+    }
 }
